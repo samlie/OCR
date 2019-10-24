@@ -17,15 +17,36 @@ int main()
 	int height = getheight(image_surface);
 	printf("%d %d \n", width, height);
 
-
+	// Create a matrix of the corresponding size
 	int res[height][width];
 
+	// Fill the matrix with the 
 	matrix(image_surface, width, height, res);
 
-    print_matrix("matrix", width, height, res);
+	// Print the matrix on screen
+    //print_matrix("matrix", width, height, res);
+
+	// Displays the color image in a window and 
+	SDL_Surface* screen_surface = display_image(image_surface);
+    wait_for_keypressed();
+    // We know that we have three lines of text, but otherwise the function is 
+    // able to determine the number of lines 
+    int a[3][4];				
+    getLineBlocks(height, width, res, 3, a);
+	for (int i = 0; i<3; i++) {
+		// Draws a red rectangle around the detected text line
+    	encadre(image_surface, a[i][0], a[i][1], a[i][2], a[i][3]);
+    }
+
+    // Update the surface on screen
+	update_surface(screen_surface, image_surface);
+	wait_for_keypressed();
+
+    // Release the surface in memory
+    SDL_FreeSurface(image_surface);
+
+	// Isolates, resizes and prints every connex region of pixels (supposedly a character)
     isoleTache(height, width, res);
 
-
-    SDL_FreeSurface(image_surface);
 	return 0;
 }

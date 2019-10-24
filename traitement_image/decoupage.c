@@ -17,6 +17,7 @@ void printMat(size_t nbrows, size_t nbcols, int mat[nbrows][nbcols]) {
 	printf("\n");
 }
 
+// Prints a float matrix in ASCII Art (different characters with grayscale representing value)
 void printMatfloatASCII(size_t nbrows, size_t nbcols, float mat[nbrows][nbcols]) {
 	for (size_t rows=0; rows<nbrows; rows++)
 	{
@@ -46,6 +47,7 @@ void printMatfloatASCII(size_t nbrows, size_t nbcols, float mat[nbrows][nbcols])
 	printf("\n");
 }
 
+// Prints a float matrix with 0s and 1s
 void printMatfloat(size_t nbrows, size_t nbcols, float mat[nbrows][nbcols]) {
 	for (size_t rows=0; rows<nbrows; rows++)
 	{
@@ -72,7 +74,7 @@ void initialize(size_t nbrows, size_t nbcols, int mat[nbrows][nbcols]) {
 	}
 }
 
-
+// Initializes a float matrix with 0s
 void initializefloat(size_t nbrows, size_t nbcols, float mat[nbrows][nbcols]) {
 	for (size_t rows=0; rows<nbrows; rows++)
 	{
@@ -83,6 +85,9 @@ void initializefloat(size_t nbrows, size_t nbcols, float mat[nbrows][nbcols]) {
 	}
 }
 
+
+// A recursive flood fill algorithm that starts at the given point in the matrix and fills every
+// connected pixel with the given number
 void boundAndColor(size_t nbrows, size_t nbcols, int mat[nbrows][nbcols], size_t rows, size_t cols, int nb, size_t bounds[4])
 {
 	if (mat[rows][cols] == 1)
@@ -123,6 +128,8 @@ void boundAndColor(size_t nbrows, size_t nbcols, int mat[nbrows][nbcols], size_t
 	}
 }
 
+
+// Fills a smaller matrix with portion of a bigger matrix
 void matrixdec(size_t nbrows,size_t nbcols, int mat[nbrows][nbcols], size_t bounds[4], int mat2[bounds[1]-bounds[0]+1][bounds[3]-bounds[2]+1], int key) {
 	for (size_t rows=bounds[0]; rows<=bounds[1]; rows++)
 	{
@@ -139,12 +146,15 @@ void matrixdec(size_t nbrows,size_t nbcols, int mat[nbrows][nbcols], size_t boun
 }
 
 
+// Resizes a matrix of 0s and 1s to a smaller matrix (smaller matrix only !)
+// The given matrix becomes a float matrix
 void resize(size_t nbrows, size_t nbcols, int caractere[nbrows][nbcols], size_t n, float res[n][n])
 {
 	float factor;
 	float alignvertical;
 	float alignhorizontal;
 
+	// Choose the right resizing factor based on matrix proportions
 	if (nbrows>nbcols)
 	{
 		factor = n/(nbrows/1.0f);
@@ -157,24 +167,30 @@ void resize(size_t nbrows, size_t nbcols, int caractere[nbrows][nbcols], size_t 
 		alignvertical = (n-(nbrows*factor))/2.0f;
 		alignhorizontal = 0;
 	}
+
+	// For each old pixel, compute the new positions and color it
 	for (size_t row=0; row<nbrows; row++)
 	{
 		for(size_t col=0; col<nbcols; col++)
 		{
 			if (caractere[row][col]==1) {
+				// New positions (float)
 				float newrow = row*factor + alignvertical;
 				float newcol = col*factor + alignhorizontal;
 
+				// New positions (rounded up to the floor and ceil integers)
 				unsigned int newrowup = (int)newrow;
 				unsigned int newcolleft = (int)newcol;
 				unsigned int newrowdown = newrowup+1;
 				unsigned int newcolright = newcolleft+1;
 
+				// Coefficients for the new positions
 				float coeffup = (newrow-newrowup)*factor;
 				float coeffleft = (newcol-newcolleft)*factor;
 				float coeffdown = (newrowdown-newrow)*factor;
 				float coeffright = (newcolright-newcol)*factor;
 
+				// Edit the values of the pixels in the new matrix
 				res[newrowup][newcolleft] += coeffup*coeffleft;
 				if (newcolright<nbcols) {res[newrowup][newcolright] += coeffup*coeffright;}
 				if (newrowdown<nbrows) {res[newrowdown][newcolleft] += coeffdown*coeffleft;}
@@ -217,6 +233,84 @@ void isoleTache(size_t nbrows, size_t nbcols, int mat[nbrows][nbcols])
 				nb++;
 	        }
 	    }
+	}
+}
+
+
+// Extracts the lines of text from the matrix
+void getLineBlocks(size_t nbrows, size_t nbcols, int mat[nbrows][nbcols], int nboftextrows, int allbounds[nboftextrows][4])
+{
+	// Bounds for vertical cropping of the next ocurring text line
+	int upperbound = 0;
+	int lowerbound = 0;
+
+	// Bounds for horizontal cropping of the next occurring line
+	int min_leftbound = nbcols;
+	int max_rightbound = 0;
+
+	// 1 if we're currently between two lines, 0 if we're currently on a text line
+	int interligne = 0;
+	
+	int i = 0;
+
+	for (unsigned int row = 0; row < nbrows; row++) {
+		int emptyline = 1;
+		int leftbound = 0;
+		int rightbound = 0;
+
+		for (unsigned int col = 0; col < nbcols; col++) {
+			if (mat[row][col]==1) {
+				if (emptyline==1) {
+					leftbound=col;
+					emptyline=0;
+				}
+				rightbound=col;
+			}
+		}
+
+		if (emptyline==0) {
+			// If the line wasn't empty, ajust the min and max bounds
+			if (leftbound < min_leftbound) min_leftbound = leftbound;
+			if (rightbound > max_rightbound) max_rightbound = rightbound;			
+		}
+
+		if (emptyline==0 && interligne==1) {
+			// This means the beginning of a new line, so keep in memory the current row
+			upperbound = row;
+			interligne = 0;
+		}
+
+		else if (emptyline==1 && interligne==0) {
+			if (row == 0) {interligne = 1;}
+			else {
+				// This means the end of a text line
+				interligne = 1;
+				lowerbound = row - 1;
+
+				// Dimensions of the text line
+				size_t lineheight = lowerbound - upperbound + 1;
+				size_t linewidth = max_rightbound - min_leftbound + 1;
+
+				// Copy values into a matrix of the corresponding size
+				int textline[lineheight][linewidth];
+				initialize(lineheight, linewidth, textline);
+				size_t bounds[4] = {upperbound, lowerbound, min_leftbound, max_rightbound};
+				matrixdec(nbrows, nbcols, mat, bounds, textline, 1);
+				printMat(lineheight, linewidth, textline);
+
+				// Keep the bounds in memory so we can draw rectangles around text later
+				allbounds[i][0] = min_leftbound;
+				allbounds[i][1] = upperbound;
+				allbounds[i][2] = max_rightbound;
+				allbounds[i][3] = lowerbound;
+				
+				i++;
+
+				// Reset the min and max horizontal bounds
+				min_leftbound = nbcols;
+				max_rightbound = 0;
+			}
+		}
 	}
 }
 

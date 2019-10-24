@@ -11,5 +11,6 @@ void print_matrix(char s[], int width, int height, int m[height][width]);
 int getwidth(SDL_Surface* image_surface);
 int getheight(SDL_Surface* image_surface);
 void matrix(SDL_Surface* image_surface, int width, int height, int res[height][width]);
+void encadre(SDL_Surface* image_surface, int x1, int y1, int x2, int y2);
 
 #endif

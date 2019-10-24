@@ -41,6 +41,19 @@ void print_matrix(char s[], int width, int height, int m[height][width])
     }
 }
 
+void encadre(SDL_Surface* image_surface, int x1, int y1, int x2, int y2) {
+
+    Uint32 color = 16711680;
+    for (int x = x1; x <= x2; x++) {
+        put_pixel(image_surface, x, y1, color);
+        put_pixel(image_surface, x, y2, color);
+    }
+
+    for (int y = y1+1; y < y2; y++) {
+        put_pixel(image_surface, x1, y, color);
+        put_pixel(image_surface, x2, y, color);
+    }
+}
 
 int getwidth(SDL_Surface* image_surface)
 {
