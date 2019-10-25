@@ -116,7 +116,7 @@ void get_RN (RN *mon_reseau, RN_float *vecteur) {
     }
 }
 
-void Aprrentisage_RN (RN *mon_reseau, RN_float *Sortie_souhaitée) {
+void Aprrentisage_RN (RN *mon_reseau, RN_float *Sortie_souhaitee) {
 
 
     int i;
@@ -124,7 +124,7 @@ void Aprrentisage_RN (RN *mon_reseau, RN_float *Sortie_souhaitée) {
     int indexdesynapses = mon_reseau->indexdesynapses[mon_reseau->nombredecouches-2];
 
     for (i = 0; i < mon_reseau->tailledescouches_sortie; i++) {
-        mon_reseau->valeur_erreur_sortie[i] = mon_reseau->neurone_sortie[i] - Sortie_souhaitée[i];
+        mon_reseau->valeur_erreur_sortie[i] = mon_reseau->neurone_sortie[i] - Sortie_souhaitee[i];
         //printf(" %d = %f \n", 7, mon_reseau->valeur_erreur_neurone[7]);
         int j;
         for (j = mon_reseau->indexdescouches[mon_reseau->nombredecouches-2]; j < mon_reseau->indexdescouches[mon_reseau->nombredecouches-2] + mon_reseau->tailledescouches[mon_reseau->nombredecouches-2]; j++) {
@@ -216,7 +216,7 @@ int main() {
         RN_float marge_erreur = 1;
         float marge_erreur_wanted = 0.05;
         /*if (g == 1) // La marge d'erreur que on veut 
-            printf("Marge d'erreur souhaitée : %f\n", marge_erreur_wanted);*/
+            printf("Marge d'erreur souhaitee : %f\n", marge_erreur_wanted);*/
         while (marge_erreur > marge_erreur_wanted) {
             //if (marge_erreur < 0.0000000000000004) break; //nombre_apprentissage = 0.00001;
 
