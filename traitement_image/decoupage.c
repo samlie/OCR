@@ -200,12 +200,37 @@ void resize(size_t nbrows, size_t nbcols, int caractere[nbrows][nbcols], size_t 
 	}
 }
 
+void save(int n, float minicar[n][n])
+{
+	FILE * fp;
+
+    /* open the file for writing*/
+	fp = fopen("sortie.txt","a");
+   for (int rows=0; rows<n; rows++)
+	{
+	    for(int cols=0; cols<n; cols++)
+	    {
+	    	if (minicar[rows][cols])
+		        	fprintf(fp, "%d", 1);
+		    	else
+		    		fprintf(fp, "%d", 0);
+	    }
+	}
+	fprintf(fp, "\n");
+	fclose (fp);
+}
+
 
 void isoleTache(size_t nbrows, size_t nbcols, int mat[nbrows][nbcols])
 {
+	FILE * fp;
+
+    /* open the file for writing*/
+	fp = fopen("sortie.txt","w");
+	fclose (fp);
+
 	//Represents the color of the character
 	int nb = 2;
-
 	for (size_t rows=0; rows<nbrows; rows++)
 	{
 		for(size_t cols=0; cols<nbcols; cols++)
@@ -229,7 +254,8 @@ void isoleTache(size_t nbrows, size_t nbcols, int mat[nbrows][nbcols])
 				float minicar[n][n];
 				initializefloat(n, n, minicar);
 				resize(nbrowschar, nbcolschar, caractere, n, minicar);
-				printMatfloatASCII(n, n, minicar);
+				save(n, minicar);
+				printMatfloat(n, n, minicar);
 				nb++;
 	        }
 	    }

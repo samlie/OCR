@@ -31,7 +31,7 @@ int main()
     wait_for_keypressed();
     // We know that we have three lines of text, but otherwise the function is 
     // able to determine the number of lines 
-    int a[3][4];				
+    int a[3][4];
     getLineBlocks(height, width, res, 3, a);
 	for (int i = 0; i<3; i++) {
 		// Draws a red rectangle around the detected text line

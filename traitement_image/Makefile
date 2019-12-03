@@ -7,7 +7,7 @@ CFLAGS= -Wall -Wextra -std=c99 -O3
 LDFLAGS=
 LDLIBS= `pkg-config --libs sdl` -lSDL_image
 
-all: main grayscale decoupage
+all: main 
 
 main: main.o grayscale.o pixel_operations.o decoupage.o
 grayscale: pixel_operations.o grayscale.o
@@ -19,5 +19,7 @@ clean:
 	${RM} *.o
 	${RM} *.d
 	${RM} grayscale
+	${RM} main
+	${RM} decoupage
 
 # END
