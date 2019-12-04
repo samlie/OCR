@@ -69,7 +69,7 @@ void initialize(size_t nbrows, size_t nbcols, int mat[nbrows][nbcols]) {
 	{
 	    for(size_t cols=0; cols<nbcols; cols++)
 	    {
-	         mat[rows][cols] = 0;
+	        mat[rows][cols] = 0;
 	    }
 	}
 }
@@ -206,7 +206,7 @@ void save(int n, float minicar[n][n])
 
     /* open the file for writing*/
 	fp = fopen("sortie.txt","a");
-   for (int rows=0; rows<n; rows++)
+    for (int rows=0; rows<n; rows++)
 	{
 	    for(int cols=0; cols<n; cols++)
 	    {
@@ -255,12 +255,145 @@ void isoleTache(size_t nbrows, size_t nbcols, int mat[nbrows][nbcols])
 				initializefloat(n, n, minicar);
 				resize(nbrowschar, nbcolschar, caractere, n, minicar);
 				save(n, minicar);
-				printMatfloat(n, n, minicar);
+				printMatfloatASCII(n, n, minicar);
 				nb++;
 	        }
 	    }
 	}
 }
+
+
+/*
+
+void isoleTacheFromLine(size_t nbrows, size_t nbcols, int mat[nbrows][nbcols], int bounds[4])
+{
+	FILE * fp;
+
+    // open the file for writing
+	fp = fopen("sortie.txt","w");
+	fclose (fp);
+	//Represents the color of the character
+	int nb = 2;
+	for (int cols=bounds[0]; cols<bounds[2]; cols++)
+	{
+		for(int rows=bounds[1]; rows<bounds[3]; rows++)
+		{
+			//Meet a "1"
+			if (mat[rows][cols]==1){
+				//Create a list
+				//Bounds[0] = Minimal row
+				//Bounds[1] = Maximal row
+				//Bounds[2] = Minimal col
+				//Bounds[3] = Maximal col
+				size_t bounds[4] = {nbrows, 0, nbcols, 0};
+				boundAndColor(nbrows, nbcols, mat, rows, cols, nb, bounds);
+				size_t nbrowschar = bounds[1]-bounds[0]+1;
+				size_t nbcolschar = bounds[3]-bounds[2]+1;
+				int caractere[nbrowschar][nbcolschar];
+				initialize(nbrowschar, nbcolschar, caractere);
+				//printMat(nbrowschar, nbcolschar, caractere);
+				matrixdec(nbrows, nbcols, mat, bounds, caractere, nb);
+				int n = 16;
+				float minicar[n][n];
+				initializefloat(n, n, minicar);
+				//So that it's not too big
+				resize(nbrowschar, nbcolschar, caractere, n, minicar);
+				//Save the char in the file
+				save(n, minicar);
+				printMatfloatASCII(n, n, minicar);
+				nb++;
+	        }
+	    }
+	}
+} */
+
+
+
+void isoleTacheFromLine(size_t nbrows, size_t nbcols, int mat[nbrows][nbcols], int bounds[4])
+{
+	
+	//Represents the color of the character
+	int nb = 2;
+	size_t innerbounds[4] = {nbrows, 0, nbcols, 0};
+	int scanningcharacter = 0;
+
+
+	for (int cols=bounds[0]; cols<bounds[2]+1; cols++)
+	{
+		int nbtrouve = 0;
+		for(int rows=bounds[1]; rows<bounds[3]+1; rows++)
+		{
+			if (mat[rows][cols]==nb) 
+			{
+				nbtrouve=1;
+			}
+
+			//Meet a "1"
+			if (mat[rows][cols]==1)
+			{
+				nbtrouve = 1;
+				scanningcharacter = 1;
+				//Create a list
+				//Bounds[0] = Minimal row
+				//Bounds[1] = Maximal row
+				//Bounds[2] = Minimal col
+				//Bounds[3] = Maximal col
+
+
+				size_t newbounds[4] = {nbrows, 0, nbcols, 0};
+				boundAndColor(nbrows, nbcols, mat, rows, cols, nb, newbounds);
+				if (innerbounds[0] > newbounds[0]) 
+				{
+					innerbounds[0] = newbounds[0];
+				}
+				if (innerbounds[1] < newbounds[1]) 
+				{
+					innerbounds[1] = newbounds[1];
+				}
+				if (innerbounds[2] > newbounds[2]) 
+				{
+					innerbounds[2] = newbounds[2];
+				}
+				if (innerbounds[3] < newbounds[3]) 
+				{
+					innerbounds[3] = newbounds[3];
+				}
+				
+	        }
+	    }
+
+	    if (cols==bounds[2] || (nbtrouve == 0 && scanningcharacter))
+	    {
+	    	scanningcharacter = 0;
+			size_t nbrowschar = innerbounds[1]-innerbounds[0]+1;
+			size_t nbcolschar = innerbounds[3]-innerbounds[2]+1;
+			int caractere[nbrowschar][nbcolschar];
+			initialize(nbrowschar, nbcolschar, caractere);
+			//printMat(nbrowschar, nbcolschar, caractere);
+
+			matrixdec(nbrows, nbcols, mat, innerbounds, caractere, nb);
+
+			int n = 16;
+			float minicar[n][n];
+			initializefloat(n, n, minicar);
+			//So that it's not too big
+			resize(nbrowschar, nbcolschar, caractere, n, minicar);
+			//Save the char in the file
+			innerbounds[0] = nbrows;
+			innerbounds[1] = 0;
+			innerbounds[2] = nbcols;
+			innerbounds[3] = 0;
+			save(n, minicar);
+			printMatfloatASCII(n, n, minicar);
+			nb++;
+	    }
+	}
+}
+
+
+
+
+
 
 
 // Extracts the lines of text from the matrix

@@ -13,6 +13,12 @@ int main()
 	//Create the sdl surface we'll use
 	SDL_Surface* image_surface = load_image("pil_text.bmp");
 
+	FILE * fp;
+
+    /* open the file for writing*/
+	fp = fopen("sortie.txt","w");
+	fclose (fp);
+
 	int width = getwidth(image_surface);
 	int height = getheight(image_surface);
 	printf("%d %d \n", width, height);
@@ -31,10 +37,13 @@ int main()
     wait_for_keypressed();
     // We know that we have three lines of text, but otherwise the function is 
     // able to determine the number of lines 
-    int a[3][4];
-    getLineBlocks(height, width, res, 3, a);
-	for (int i = 0; i<3; i++) {
+    int a[5][4];
+    getLineBlocks(height, width, res, 5, a);
+
+	for (int i = 0; i<5; i++) {
+		printf("%d %d %d %d\n", a[i][0], a[i][1], a[i][2], a[i][3]);
 		// Draws a red rectangle around the detected text line
+		isoleTacheFromLine(height, width, res, a[i]);
     	encadre(image_surface, a[i][0], a[i][1], a[i][2], a[i][3]);
     }
 
@@ -46,7 +55,7 @@ int main()
     SDL_FreeSurface(image_surface);
 
 	// Isolates, resizes and prints every connex region of pixels (supposedly a character)
-    isoleTache(height, width, res);
+    //isoleTache(height, width, res);
 
 	return 0;
 }
