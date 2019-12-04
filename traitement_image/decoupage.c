@@ -200,6 +200,18 @@ void resize(size_t nbrows, size_t nbcols, int caractere[nbrows][nbcols], size_t 
 	}
 }
 
+int poww(int x, int n) 
+{
+	if (n <= 0) 
+	{
+		return 1;
+	}
+	else 
+	{
+		return (int)x*poww(x,n-1);
+	}
+}
+
 void save(int n, float minicar[n][n])
 {
 	FILE * fp;
@@ -210,10 +222,25 @@ void save(int n, float minicar[n][n])
 	{
 	    for(int cols=0; cols<n; cols++)
 	    {
+	    	int value = (int)(minicar[rows][cols]*255);
+	    	for (int i = 7; i >=0; i--)
+	    	{
+	    		int div = poww(2, i);
+		    	if (value>=div) 
+		    	{
+		    		value -= div;
+		    		fprintf(fp, "%d", 1);
+		    	}
+		    	else 
+		    	{
+		    		fprintf(fp, "%d", 0);
+		    	}
+		    }
+	    	/*
 	    	if (minicar[rows][cols])
 		        	fprintf(fp, "%d", 1);
 		    	else
-		    		fprintf(fp, "%d", 0);
+		    		fprintf(fp, "%d", 0);*/
 	    }
 	}
 	fprintf(fp, "\n");

@@ -1,1 +1,0 @@
-decoupage.o: decoupage.c
