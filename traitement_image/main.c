@@ -37,11 +37,11 @@ int main()
     wait_for_keypressed();
     // We know that we have three lines of text, but otherwise the function is 
     // able to determine the number of lines 
+    //int x = getNbOfLines(width, height, res);
     int a[5][4];
     getLineBlocks(height, width, res, 5, a);
 
 	for (int i = 0; i<5; i++) {
-		printf("%d %d %d %d\n", a[i][0], a[i][1], a[i][2], a[i][3]);
 		// Draws a red rectangle around the detected text line
 		isoleTacheFromLine(height, width, res, a[i]);
     	encadre(image_surface, a[i][0], a[i][1], a[i][2], a[i][3]);

@@ -218,6 +218,7 @@ void save(int n, float minicar[n][n])
 
     /* open the file for writing*/
 	fp = fopen("sortie.txt","a");
+	fprintf(fp, "2");
     for (int rows=0; rows<n; rows++)
 	{
 	    for(int cols=0; cols<n; cols++)
@@ -335,7 +336,7 @@ void isoleTacheFromLine(size_t nbrows, size_t nbcols, int mat[nbrows][nbcols], i
 } */
 
 
-
+/*
 void isoleTacheFromLine(size_t nbrows, size_t nbcols, int mat[nbrows][nbcols], int bounds[4])
 {
 	
@@ -415,12 +416,137 @@ void isoleTacheFromLine(size_t nbrows, size_t nbcols, int mat[nbrows][nbcols], i
 			nb++;
 	    }
 	}
+} */
+
+
+
+void isoleTacheFromLine(size_t nbrows, size_t nbcols, int mat[nbrows][nbcols], int bounds[4])
+{
+	
+	//Represents the color of the character
+	int nb = 2;
+	size_t innerbounds[4] = {nbrows, 0, nbcols, 0};
+	int scanningcharacter = 0;
+    int lastspacesize = 0;
+
+	for (int cols=bounds[0]; cols<bounds[2]+1; cols++)
+	{
+		int nbtrouve = 0;
+		for(int rows=bounds[1]; rows<bounds[3]+1; rows++)
+		{
+			if (mat[rows][cols]==nb) 
+			{
+				nbtrouve=1;
+			}
+
+			//Meet a "1"
+			if (mat[rows][cols]==1)
+			{
+        		if (scanningcharacter == 0) 
+        		{
+	        		scanningcharacter = 1;
+	        		if (lastspacesize > .3*(bounds[3]-bounds[1])) 
+	            	{
+	            		FILE * fp;
+					    /* open the file for writing*/
+						fp = fopen("sortie.txt","a");
+						fprintf(fp, "3 \n");
+						fclose (fp);
+	            	}
+	            	lastspacesize=0;
+        		}
+				nbtrouve = 1;
+				//Create a list
+				//Bounds[0] = Minimal row
+				//Bounds[1] = Maximal row
+				//Bounds[2] = Minimal col
+				//Bounds[3] = Maximal col
+				size_t newbounds[4] = {nbrows, 0, nbcols, 0};
+				boundAndColor(nbrows, nbcols, mat, rows, cols, nb, newbounds);
+				if (innerbounds[0] > newbounds[0]) 
+				{
+					innerbounds[0] = newbounds[0];
+				}
+				if (innerbounds[1] < newbounds[1]) 
+				{
+					innerbounds[1] = newbounds[1];
+				}
+				if (innerbounds[2] > newbounds[2]) 
+				{
+					innerbounds[2] = newbounds[2];
+				}
+				if (innerbounds[3] < newbounds[3]) 
+				{
+					innerbounds[3] = newbounds[3];
+				}				
+	        }
+	    }
+
+      if (nbtrouve == 0) 
+      {
+        lastspacesize++;
+      }
+
+
+	    if (cols==bounds[2] || (nbtrouve == 0 && scanningcharacter))
+	    {
+      	scanningcharacter = 0;
+        lastspacesize=0;
+  			size_t nbrowschar = innerbounds[1]-innerbounds[0]+1;
+  			size_t nbcolschar = innerbounds[3]-innerbounds[2]+1;
+  			int caractere[nbrowschar][nbcolschar];
+  			initialize(nbrowschar, nbcolschar, caractere);
+  			//printMat(nbrowschar, nbcolschar, caractere);
+
+  			matrixdec(nbrows, nbcols, mat, innerbounds, caractere, nb);
+
+  			int n = 16;
+  			float minicar[n][n];
+  			initializefloat(n, n, minicar);
+  			//So that it's not too big
+  			resize(nbrowschar, nbcolschar, caractere, n, minicar);
+  			//Save the char in the file
+  			innerbounds[0] = nbrows;
+  			innerbounds[1] = 0;
+  			innerbounds[2] = nbcols;
+  			innerbounds[3] = 0;
+  			save(n, minicar);
+  			printMatfloatASCII(n, n, minicar);
+  			nb++;
+	    }
+	}
 }
 
+int getNbOfLines(size_t nbrows, size_t nbcols, int mat[nbrows][nbcols])
+{
+	// 1 if we're currently between two lines, 0 if we're currently on a text line
+	int interligne = 1;	
+	int i = 0;
+	for (unsigned int row = 0; row < nbrows; row++)
+	{
+		int emptyline = 1;
+		for (unsigned int col = 0; col < nbcols; col++)
+		{
+			if (mat[row][col]==1)
+			{
+				emptyline=0;
+			}
+		}
+		if (emptyline==0 && interligne==1) 
+		{
+			// This means the beginning of a new line, so increment i
+			i++;
+  			interligne = 0;
+		}
+    	else if (emptyline==1 && interligne==0)
+    	{
+		    // This means the end of a new line, so reset interligne
+		    interligne = 1;
+	    }
+	}
 
-
-
-
+  return i;
+}
 
 
 // Extracts the lines of text from the matrix
