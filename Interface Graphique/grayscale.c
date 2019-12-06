@@ -93,7 +93,7 @@ void matrix(SDL_Surface* image_surface, int width, int height, int res[height][w
             gray = 0.212671f*r + 0.715160f*g + 0.072169f*b;
 
             //Thresholding and filling the output matrix
-            if (gray < 127)
+            if (gray > 127)
             {
                 res[i][j] = 0;
             }

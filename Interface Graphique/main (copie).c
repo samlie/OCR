@@ -211,25 +211,25 @@ RN_float conv(char * s) {
 
 char * ocr(char * txt) {
     srand(time(NULL));
-    int tailledescouches[] = {256, 30, 79};
-    int nbcouches = 3;
+    int tailledescouches[] = {256, 69};
+    int nbcouches = 2;
     RN * mon_reseau = _init_RN (nbcouches, tailledescouches);
 
 
     FILE* file ;
-    file = fopen("alpha.txt" , "r");
+    file = fopen("alphabet.txt" , "r");
     FILE* file2 ;
     file2 = fopen(txt , "r");
     RN_float data3[256];
-    RN_float data4[79];
+    RN_float data4[69];
     char s[9];
 
 
-    for (int iter=0; iter < 1000000 ; iter++) {
-        for(int i = 0; i<79; i++) {
+    for (int iter=0; iter < 10000 ; iter++) {
+        for(int i = 0; i<69; i++) {
             data4[i] = 0;
         }
-        int m = rand() % 79;
+        int m = rand() % 69;
         fseek(file, 2050*m+1 , SEEK_SET);
 
         for(int i=0; i<256 ; i++) {
@@ -280,7 +280,7 @@ char * ocr(char * txt) {
         }
         start_RN(mon_reseau,data3); //get_RN(mon_reseau,result);
         int max = 0;
-        for (int f =0 ; f<79; f++) {
+        for (int f =0 ; f<69; f++) {
             if (mon_reseau->neurone_sortie[f] > mon_reseau->neurone_sortie[max])
                 max = f;
             //printf("\n%lf",mon_reseau->neurone_sortie[f]);
@@ -292,41 +292,39 @@ char * ocr(char * txt) {
             asc2 = 97+max;
         else if (max<52)
             asc2 = 39+max;
-        else if (max<62)
-            asc2 = 48+max-52;
-        else if (max==62)
+        else if (max==52)
             asc2 = 58;
-        else if (max==63)
-            asc2 = 33;
-        else if (max==64)
+        else if (max==53)
+            asc2 = 41;
+        else if (max==54)
             asc2 = 63;
-        else if (max==65)
+        else if (max==55)
             asc2 = 46;
-        else if (max==66)
+        else if (max==56)
             asc2 = 44;
-        else if (max==67)
+        else if (max==57)
             asc2 = 151;
-        else if (max==68)
+        else if (max==58)
             asc2 = 130;
-        else if (max==69)
+        else if (max==59)
             asc2 = 160;
-        else if (max==70)
+        else if (max==60)
             asc2 = 135;
-        else if (max==71)
+        else if (max==61)
             asc2 = 138;
-        else if (max==72)
+        else if (max==62)
             asc2 = 37;
-        else if (max==73)
+        else if (max==63)
             asc2 = 36;
-        else if (max==74)
+        else if (max==64)
             asc2 = 156;
-        else if (max==75)
+        else if (max==65)
             asc2 = 100;
-        else if (max==76)
+        else if (max==66)
             asc2 = 135;
-        else if (max==77)
+        else if (max==67)
             asc2 = 40;
-        else if (max==78)
+        else if (max==68)
             asc2 = 41;
 
         char ch2[1] = " ";
